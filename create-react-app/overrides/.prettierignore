@@ -1,0 +1,8 @@
+# Build artifacts
+dist
+min
+node_modules
+public
+
+*.json
+*.xml

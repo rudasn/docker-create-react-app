@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+
+command=$@
+
+docker-compose build production
+docker-compose run --rm production /bin/bash -c "yarn $command"

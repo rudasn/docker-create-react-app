@@ -1,0 +1,9 @@
+version: '2.2'
+
+services:
+  init:
+    image: react-app:0.0.1
+    container_name: create-react-app
+    init: true
+    build:
+      context: .

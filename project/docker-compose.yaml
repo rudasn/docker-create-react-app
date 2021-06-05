@@ -1,0 +1,68 @@
+version: "2.2"
+services:
+  dev:
+    image: dev-my-app
+    container_name: dev-my-app
+    init: true
+    environment:
+      NODE_ENV: develop
+    build:
+      context: .
+    volumes:
+      # Creates a named volume for node_modules
+      # so that it persists throught our containers.
+      #
+      # During the first run, since `app/node_modules/` does not exist locally yet,
+      # it will be created and managed by docker.
+      #
+      # A `node_modules` folder will appear under `app/` and will be empty.
+      # This is because we also mount the local `app/` folder to the container,
+      # and the container is installing node modules under `app/node_modules`.
+      #
+      # To see the actual contents of the `node_modules` folder use
+      # docker inspect volume <name-of-volume> (eg `createreactdockerapp_node_modules`).
+      - node_modules:/app/node_modules
+      - ./app:/app
+    ports:
+      - 3000:3000
+    command: ["yarn", "start"]
+
+  production:
+    image: my-app:0.0.1
+    init: true
+    environment:
+      NODE_ENV: production
+    build:
+      context: .
+    volumes:
+      - ./app:/app
+      # `/app/node_modules/` is an unamed volume mounted into the container.
+      #
+      # We use an unamed volume so as to ensure that we get a fresh
+      # copy of `node_modules` for each container.
+      #
+      # Fresh means as it was right after `yarn install` was called
+      # for the first time (inside the Dockerfile).
+      #
+      # If a container modifies `/app/node_modules` contents for some reason
+      # while our code is running,
+      # those changes are only persisted for that container.
+      #
+      # Using `run` enforces this:
+      #
+      # ```
+      # docker-compose build production
+      # docker-compose run --rm production yarn build
+      # ```
+      #
+      # This will create a new copy of the unnamed volume `/app/node_modules/`,
+      # and copy it to the container, so it may take a while to start.
+      #
+      # For "cached" builds use the the existing container using `up`
+      #
+      # docker-compose up --build production
+      #
+    command: ["yarn", "build"]
+
+volumes:
+  node_modules:

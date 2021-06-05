@@ -1,0 +1,30 @@
+# #!/usr/bin/env bash
+
+set -e
+
+cd create-react-app/
+
+docker-compose build
+
+cd ../project
+
+# mkdir ./app/src
+
+echo ''
+echo 'Copying files..'
+
+docker cp create-react-app:/app ./
+
+echo ''
+echo 'Removing node_modules..'
+
+rm -rf app/node_modules
+
+cd ../
+
+echo ''
+echo 'Done!'
+echo ''
+echo 'You can now copy the "project" directory to your own repository'
+echo ''
+echo 'cp project/ ~/my-react-app'

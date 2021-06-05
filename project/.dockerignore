@@ -1,0 +1,12 @@
+# dockerignore
+
+.git/
+
+app/node_modules/
+app/public/
+
+tmp/
+local/
+logs/
+
+
